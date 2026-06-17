@@ -1,0 +1,122 @@
+<mujoco model="autonomous_disaster_response_rover_disaster_scene">
+  <compiler angle="radian" coordinate="local"/>
+  <option timestep="0.004" gravity="0 0 -9.81" iterations="60" solver="Newton"/>
+
+  <visual>
+    <global offwidth="1280" offheight="720"/>
+    <quality shadowsize="2048"/>
+    <map force="0.1" znear="0.01"/>
+  </visual>
+
+  <asset>
+    <texture name="concrete_checker" type="2d" builtin="checker"
+             rgb1="0.22 0.22 0.21" rgb2="0.28 0.28 0.27"
+             width="512" height="512"/>
+    <material name="concrete" texture="concrete_checker" texrepeat="9 7" reflectance="0.10"/>
+    <material name="start_zone_mat" rgba="0.08 0.34 0.95 0.55"/>
+    <material name="extraction_zone_mat" rgba="0.10 0.80 0.32 0.60"/>
+    <material name="search_zone_mat" rgba="0.95 0.72 0.18 0.28"/>
+    <material name="hazard_mat" rgba="0.95 0.12 0.08 0.52"/>
+    <material name="rubble_mat" rgba="0.33 0.31 0.29 1"/>
+    <material name="beam_mat" rgba="0.18 0.17 0.16 1"/>
+    <material name="victim_mat" rgba="1.0 0.94 0.12 1"/>
+  </asset>
+
+  <worldbody>
+    <light name="sun_key" pos="-2.5 -4.0 6.0" dir="0.35 0.55 -1" diffuse="0.95 0.92 0.86"/>
+    <light name="rescue_fill" pos="4.0 2.5 3.0" dir="-0.8 -0.35 -1" diffuse="0.38 0.44 0.50"/>
+    <camera name="mission_overview_camera" pos="6.8 -7.0 5.2" xyaxes="0.72 0.69 0 -0.42 0.44 0.79"/>
+    <camera name="start_zone_camera" pos="-4.2 -4.2 2.0" xyaxes="0.72 -0.70 0 0.30 0.31 0.90"/>
+
+    <geom name="concrete_floor" type="plane" size="8.0 6.0 0.05" material="concrete"
+          friction="1.4 0.08 0.02" condim="4"/>
+
+    <geom name="start_zone" type="box" pos="-5.25 -3.75 0.006" size="0.85 0.65 0.006"
+          material="start_zone_mat" contype="0" conaffinity="0"/>
+    <geom name="extraction_zone" type="box" pos="5.25 3.65 0.008" size="1.00 0.80 0.008"
+          material="extraction_zone_mat" contype="0" conaffinity="0"/>
+
+    <geom name="search_zone_alpha" type="box" pos="-2.50 -1.20 0.004" size="1.10 0.85 0.004"
+          material="search_zone_mat" contype="0" conaffinity="0"/>
+    <geom name="search_zone_bravo" type="box" pos="1.25 1.05 0.004" size="1.20 0.95 0.004"
+          material="search_zone_mat" contype="0" conaffinity="0"/>
+    <geom name="search_zone_charlie" type="box" pos="4.30 2.25 0.004" size="1.25 1.00 0.004"
+          material="search_zone_mat" contype="0" conaffinity="0"/>
+
+    <geom name="hazard_fire_patch" type="box" pos="1.20 -2.25 0.010" size="1.05 0.58 0.010"
+          material="hazard_mat" contype="0" conaffinity="0"/>
+    <geom name="hazard_chemical_spill" type="box" pos="2.95 0.25 0.010" size="0.82 0.48 0.010"
+          material="hazard_mat" contype="0" conaffinity="0"/>
+
+    <geom name="left_corridor_wall" type="box" pos="-1.20 -0.18 0.33" size="0.16 2.15 0.33"
+          material="rubble_mat" friction="1.1 0.05 0.01"/>
+    <geom name="right_corridor_wall" type="box" pos="0.15 -0.62 0.30" size="0.16 1.60 0.30"
+          material="rubble_mat" friction="1.1 0.05 0.01"/>
+    <geom name="collapsed_wall_north" type="box" pos="1.75 2.15 0.38" size="1.15 0.16 0.38"
+          euler="0 0 0.20" material="rubble_mat" friction="1.1 0.05 0.01"/>
+    <geom name="collapsed_wall_south" type="box" pos="-3.00 -2.05 0.34" size="1.00 0.18 0.34"
+          euler="0 0 -0.28" material="rubble_mat" friction="1.1 0.05 0.01"/>
+
+    <geom name="steel_beam_1" type="box" pos="-0.45 -2.58 0.13" size="1.05 0.07 0.07"
+          euler="0.05 0.18 0.55" material="beam_mat" friction="1.2 0.05 0.01"/>
+    <geom name="steel_beam_2" type="box" pos="2.35 -0.65 0.12" size="0.95 0.06 0.06"
+          euler="-0.04 0.10 -0.70" material="beam_mat" friction="1.2 0.05 0.01"/>
+    <geom name="steel_beam_3" type="box" pos="3.82 1.38 0.11" size="0.82 0.06 0.06"
+          euler="0.08 -0.12 0.42" material="beam_mat" friction="1.2 0.05 0.01"/>
+
+    <geom name="rubble_block_1" type="box" pos="-3.55 -0.88 0.16" size="0.32 0.28 0.16"
+          euler="0 0 0.30" material="rubble_mat"/>
+    <geom name="rubble_block_2" type="box" pos="-2.75 0.25 0.22" size="0.45 0.24 0.22"
+          euler="0 0 -0.20" material="rubble_mat"/>
+    <geom name="rubble_block_3" type="box" pos="-1.92 -1.75 0.14" size="0.28 0.34 0.14"
+          euler="0 0 0.75" material="rubble_mat"/>
+    <geom name="rubble_block_4" type="box" pos="0.62 0.78 0.18" size="0.38 0.30 0.18"
+          euler="0 0 -0.52" material="rubble_mat"/>
+    <geom name="rubble_block_5" type="box" pos="1.85 -1.42 0.20" size="0.36 0.42 0.20"
+          euler="0 0 0.18" material="rubble_mat"/>
+    <geom name="rubble_block_6" type="box" pos="3.05 2.55 0.18" size="0.40 0.36 0.18"
+          euler="0 0 -0.33" material="rubble_mat"/>
+    <geom name="rubble_block_7" type="box" pos="4.62 0.68 0.15" size="0.30 0.44 0.15"
+          euler="0 0 0.60" material="rubble_mat"/>
+    <geom name="rubble_block_8" type="box" pos="3.70 3.12 0.20" size="0.50 0.22 0.20"
+          euler="0 0 0.15" material="rubble_mat"/>
+
+    <body name="victim_1" pos="-4.05 -2.72 0.08">
+      <geom name="victim_1_marker" type="sphere" size="0.16" material="victim_mat"
+            contype="0" conaffinity="0"/>
+      <geom name="victim_1_base_marker" type="cylinder" size="0.24 0.012" rgba="1.0 0.94 0.12 0.30"
+            contype="0" conaffinity="0"/>
+      <site name="victim_1_site" pos="0 0 0" size="0.035" rgba="1 0.94 0.12 1"/>
+    </body>
+
+    <body name="victim_2" pos="-0.85 1.28 0.08">
+      <geom name="victim_2_marker" type="sphere" size="0.16" material="victim_mat"
+            contype="0" conaffinity="0"/>
+      <geom name="victim_2_base_marker" type="cylinder" size="0.24 0.012" rgba="1.0 0.94 0.12 0.30"
+            contype="0" conaffinity="0"/>
+      <site name="victim_2_site" pos="0 0 0" size="0.035" rgba="1 0.94 0.12 1"/>
+    </body>
+
+    <body name="victim_3" pos="1.85 -2.52 0.08">
+      <geom name="victim_3_marker" type="sphere" size="0.16" material="victim_mat"
+            contype="0" conaffinity="0"/>
+      <geom name="victim_3_base_marker" type="cylinder" size="0.24 0.012" rgba="1.0 0.94 0.12 0.30"
+            contype="0" conaffinity="0"/>
+      <site name="victim_3_site" pos="0 0 0" size="0.035" rgba="1 0.94 0.12 1"/>
+    </body>
+
+    <body name="victim_4" pos="4.70 2.78 0.08">
+      <geom name="victim_4_marker" type="sphere" size="0.16" material="victim_mat"
+            contype="0" conaffinity="0"/>
+      <geom name="victim_4_base_marker" type="cylinder" size="0.24 0.012" rgba="1.0 0.94 0.12 0.30"
+            contype="0" conaffinity="0"/>
+      <site name="victim_4_site" pos="0 0 0" size="0.035" rgba="1 0.94 0.12 1"/>
+    </body>
+  </worldbody>
+
+  <include file="../models/rover_scene_include.xml"/>
+
+  <keyframe>
+    <key name="rover_start" qpos="-5.25 -3.75 0.24 0.9664 0 0 0.2571 0 0 0 0"/>
+  </keyframe>
+</mujoco>

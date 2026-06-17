@@ -1,0 +1,32 @@
+{
+  "victims": [
+    {
+      "id": "victim_1",
+      "position": [-4.05, -2.72, 0.08],
+      "detection_radius": 3.0,
+      "rescue_radius": 0.8
+    },
+    {
+      "id": "victim_2",
+      "position": [-0.85, 1.28, 0.08],
+      "detection_radius": 3.0,
+      "rescue_radius": 0.8
+    },
+    {
+      "id": "victim_3",
+      "position": [1.85, -2.52, 0.08],
+      "detection_radius": 3.0,
+      "rescue_radius": 0.8
+    },
+    {
+      "id": "victim_4",
+      "position": [4.7, 2.78, 0.08],
+      "detection_radius": 3.0,
+      "rescue_radius": 0.8
+    }
+  ],
+  "extraction_zone": {
+    "position": [5.25, 3.65, 0.0],
+    "radius": 2.0
+  }
+}
