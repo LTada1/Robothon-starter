@@ -5,6 +5,7 @@ from collections.abc import Mapping, Sequence
 try:
     from utils.config import (
         EMERGENCY_DISTANCE,
+        MAX_WHEEL_ACCEL,
         MAX_WHEEL_SPEED,
         ROVER_SPEED,
         SAFE_DISTANCE,
@@ -16,6 +17,7 @@ try:
 except ImportError:
     from ..utils.config import (
         EMERGENCY_DISTANCE,
+        MAX_WHEEL_ACCEL,
         MAX_WHEEL_SPEED,
         ROVER_SPEED,
         SAFE_DISTANCE,
@@ -80,17 +82,18 @@ def compute_wheel_commands(
 
     heading_error = compute_heading_error(rover_position, rover_heading, target_position)
     speed_scale = _obstacle_speed_scale(obstacle_distances)
-    base_speed = ROVER_SPEED * speed_scale
+    heading_scale = max(0.25, 1.0 - min(abs(heading_error), 1.5) / 1.5)
+    base_speed = ROVER_SPEED * speed_scale * heading_scale
 
     if speed_scale == 0.0:
         avoidance = _avoidance_turn(obstacle_distances)
-        turn_command = MAX_WHEEL_SPEED * 0.45 * (1.0 if avoidance >= 0.0 else -1.0)
+        turn_command = MAX_WHEEL_SPEED * 0.32 * (1.0 if avoidance >= 0.0 else -1.0)
         return _clamp(turn_command, -MAX_WHEEL_SPEED, MAX_WHEEL_SPEED), _clamp(
             -turn_command, -MAX_WHEEL_SPEED, MAX_WHEEL_SPEED
         )
 
-    steering = _clamp(TURN_GAIN * heading_error, -MAX_WHEEL_SPEED, MAX_WHEEL_SPEED)
-    steering += MAX_WHEEL_SPEED * 0.35 * _avoidance_turn(obstacle_distances)
+    steering = _clamp(TURN_GAIN * heading_error, -MAX_WHEEL_SPEED * 0.65, MAX_WHEEL_SPEED * 0.65)
+    steering += MAX_WHEEL_SPEED * 0.20 * _avoidance_turn(obstacle_distances)
 
     left_speed = base_speed - steering
     right_speed = base_speed + steering
@@ -102,4 +105,12 @@ def compute_wheel_commands(
 
 
 def apply_control(model, data, left_wheel_velocity: float, right_wheel_velocity: float) -> None:
-    set_wheel_velocity(model, data, left_wheel_velocity, right_wheel_velocity)
+    current_left = float(data.ctrl[0]) if len(data.ctrl) else 0.0
+    current_right = float(data.ctrl[2]) if len(data.ctrl) > 2 else current_left
+
+    target_left = _clamp(left_wheel_velocity, -MAX_WHEEL_SPEED, MAX_WHEEL_SPEED)
+    target_right = _clamp(right_wheel_velocity, -MAX_WHEEL_SPEED, MAX_WHEEL_SPEED)
+
+    smooth_left = current_left + _clamp(target_left - current_left, -MAX_WHEEL_ACCEL, MAX_WHEEL_ACCEL)
+    smooth_right = current_right + _clamp(target_right - current_right, -MAX_WHEEL_ACCEL, MAX_WHEEL_ACCEL)
+    set_wheel_velocity(model, data, smooth_left, smooth_right)

@@ -1,6 +1,6 @@
 <mujoco model="autonomous_disaster_response_rover_disaster_scene">
   <compiler angle="radian" coordinate="local"/>
-  <option timestep="0.004" gravity="0 0 -9.81" iterations="60" solver="Newton"/>
+  <option timestep="0.002" gravity="0 0 -9.81" iterations="80" solver="Newton"/>
 
   <visual>
     <global offwidth="1280" offheight="720"/>
