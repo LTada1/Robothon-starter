@@ -59,6 +59,21 @@ def set_wheel_velocity(model: Any, data: Any, left_velocity: float, right_veloci
         data.ctrl[_actuator_id(model, name)] = right_velocity
 
 
+def set_rescue_deployer(model: Any, data: Any, command: float) -> None:
+    actuator = _actuator_id(model, "rescue_deployer_actuator")
+    low, high = float(model.actuator_ctrlrange[actuator][0]), float(model.actuator_ctrlrange[actuator][1])
+    data.ctrl[actuator] = max(low, min(high, float(command)))
+
+
+def get_rescue_deployer_state(model: Any, data: Any) -> float:
+    mujoco = _require_mujoco()
+    joint_id = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_JOINT, "rescue_deployer_joint")
+    if joint_id < 0:
+        raise ValueError("Joint not found: rescue_deployer_joint")
+    qpos_index = int(model.jnt_qposadr[joint_id])
+    return float(data.qpos[qpos_index])
+
+
 def read_sensor_values(model: Any, data: Any) -> dict[str, list[float] | float]:
     values: dict[str, list[float] | float] = {}
     cursor = 0

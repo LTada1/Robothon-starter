@@ -65,9 +65,13 @@ def collect_step_record(
     collision_count: int,
     recovery_action: str | None,
     controller_decision: dict[str, Any] | None = None,
+    rescue_interaction: dict[str, Any] | None = None,
+    rescue_actuator_command: float = 0.0,
+    victim_confirmation_status: str = "",
 ) -> dict[str, Any]:
     detected_victims = collect_victim_detection_events(visible_victims)
     controller_decision = controller_decision or {}
+    rescue_interaction = rescue_interaction or {}
     navigation_decision = collect_navigation_decision(
         mission_state,
         active_target,
@@ -99,5 +103,10 @@ def collect_step_record(
         "distance_to_target": round(float(controller_decision.get("distance_to_target", 0.0)), 5),
         "speed_scale": round(float(controller_decision.get("speed_scale", 0.0)), 5),
         "steering_bias": round(float(controller_decision.get("steering_bias", 0.0)), 5),
+        "rescue_interaction_state": rescue_interaction.get("rescue_interaction_state", "inactive"),
+        "rescue_actuator_command": round(float(rescue_actuator_command), 5),
+        "rescue_tool_deployed": bool(rescue_interaction.get("rescue_tool_deployed", False)),
+        "aligned_to_victim": bool(rescue_interaction.get("aligned_to_victim", False)),
+        "victim_confirmation_status": victim_confirmation_status,
         "recovery_action": recovery_action or "",
     }

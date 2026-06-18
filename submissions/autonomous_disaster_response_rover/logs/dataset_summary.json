@@ -1,10 +1,10 @@
 {
-  "simulation_steps": 306,
+  "simulation_steps": 338,
   "total_distance": 18.06,
   "victims_detected": 4,
   "victims_rescued": 4,
   "collisions": 21,
-  "obstacle_events": 143,
-  "recovery_attempts": 179,
-  "successful_recoveries": 178
+  "obstacle_events": 159,
+  "recovery_attempts": 203,
+  "successful_recoveries": 202
 }

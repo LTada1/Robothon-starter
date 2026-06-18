@@ -1,23 +1,23 @@
 {
   "project": "Autonomous Disaster Response Rover",
   "mission_success": true,
-  "final_score": 86.47,
+  "final_score": 86.31,
   "victims_rescued": 4,
   "total_victims": 4,
-  "mission_time_s": 12.24,
+  "mission_time_s": 13.52,
   "distance_traveled_m": 18.06,
   "collision_count": 21,
   "hazard_entries": 2,
   "extraction_reached": true,
   "dataset_summary": {
-    "simulation_steps": 306,
+    "simulation_steps": 338,
     "total_distance": 18.06,
     "victims_detected": 4,
     "victims_rescued": 4,
     "collisions": 21,
-    "obstacle_events": 143,
-    "recovery_attempts": 179,
-    "successful_recoveries": 178
+    "obstacle_events": 159,
+    "recovery_attempts": 203,
+    "successful_recoveries": 202
   },
   "artifacts": {
     "trajectory_png": "C:\\Users\\A1\\Documents\\Codex\\2026-06-17\\gitclone-ltada1-robothon-starter-git-https\\Robothon-starter\\submissions\\autonomous_disaster_response_rover\\logs\\trajectory.png",

@@ -12,14 +12,20 @@ except ImportError:
 
 
 class MissionState(str, Enum):
-    START = "START"
-    SEARCH = "SEARCH"
-    APPROACH_TARGET = "APPROACH_TARGET"
-    CONFIRM_RESCUE = "CONFIRM_RESCUE"
-    NEXT_TARGET = "NEXT_TARGET"
-    RETURN_TO_BASE = "RETURN_TO_BASE"
+    SEARCHING = "SEARCHING"
+    APPROACHING = "APPROACHING"
+    ALIGNING = "ALIGNING"
+    RESCUING = "RESCUING"
+    CONFIRMING = "CONFIRMING"
+    RETURNING = "RETURNING"
     COMPLETE = "COMPLETE"
     TIMEOUT = "TIMEOUT"
+    START = "SEARCHING"
+    SEARCH = "SEARCHING"
+    APPROACH_TARGET = "APPROACHING"
+    CONFIRM_RESCUE = "CONFIRMING"
+    NEXT_TARGET = "SEARCHING"
+    RETURN_TO_BASE = "RETURNING"
 
 
 DEFAULT_TARGETS_PATH = Path(__file__).resolve().parents[1] / "environments" / "mission_targets.json"
@@ -28,7 +34,7 @@ DEFAULT_TARGETS_PATH = Path(__file__).resolve().parents[1] / "environments" / "m
 class MissionPlanner:
     def __init__(self, mission_timeout_s: float = 120.0) -> None:
         self.mission_timeout_s = mission_timeout_s
-        self.state = MissionState.START
+        self.state = MissionState.SEARCHING
         self.victims: list[dict[str, Any]] = []
         self.extraction_zone: dict[str, Any] = {}
         self.rescued_victim_ids: set[str] = set()
@@ -46,7 +52,7 @@ class MissionPlanner:
         self.current_target_id = None
         self.events = [{"event": "mission_started", "time": round(float(start_time), 3)}]
         self.start_time = float(start_time)
-        self.state = MissionState.SEARCH
+        self.state = MissionState.SEARCHING
 
     def _mission_elapsed(self, current_time: float) -> float:
         return float(current_time) - self.start_time
@@ -74,6 +80,7 @@ class MissionPlanner:
         current_time: float,
         visible_victims: list[dict[str, Any]] | None = None,
         rescue_confirmed_id: str | None = None,
+        rescue_interaction_state: str | None = None,
     ) -> MissionState:
         if self.state in {MissionState.COMPLETE, MissionState.TIMEOUT}:
             return self.state
@@ -97,7 +104,7 @@ class MissionPlanner:
 
         if rescue_confirmed_id is not None:
             self.mark_target_rescued(rescue_confirmed_id, current_time)
-            self.state = MissionState.NEXT_TARGET
+            self.state = MissionState.SEARCHING
 
         if len(self.rescued_victim_ids) == len(self.victims):
             self.current_target_id = None
@@ -107,24 +114,29 @@ class MissionPlanner:
                 self.state = MissionState.COMPLETE
                 self.events.append({"event": "mission_complete", "time": round(float(current_time), 3)})
             else:
-                self.state = MissionState.RETURN_TO_BASE
+                self.state = MissionState.RETURNING
             return self.state
 
-        if self.state in {MissionState.SEARCH, MissionState.NEXT_TARGET, MissionState.START}:
+        if self.state in {MissionState.SEARCHING, MissionState.START, MissionState.NEXT_TARGET}:
             target = self.select_nearest_unrescued_victim(rover_position)
             self.current_target_id = target["id"] if target else None
-            self.state = MissionState.APPROACH_TARGET if target else MissionState.RETURN_TO_BASE
+            self.state = MissionState.APPROACHING if target else MissionState.RETURNING
 
         current_target = self._victim_by_id(self.current_target_id)
         if current_target and point_in_radius(rover_position, current_target["position"], float(current_target["rescue_radius"])):
-            self.state = MissionState.CONFIRM_RESCUE
+            if rescue_interaction_state == "confirming":
+                self.state = MissionState.CONFIRMING
+            elif rescue_interaction_state in {"deploying", "deployed"}:
+                self.state = MissionState.RESCUING
+            else:
+                self.state = MissionState.ALIGNING
         elif current_target:
-            self.state = MissionState.APPROACH_TARGET
+            self.state = MissionState.APPROACHING
 
         return self.state
 
     def get_current_target(self, rover_position: list[float] | tuple[float, ...] | None = None) -> dict[str, Any] | None:
-        if self.state == MissionState.RETURN_TO_BASE:
+        if self.state == MissionState.RETURNING:
             return {"id": "extraction_zone", **self.extraction_zone}
 
         target = self._victim_by_id(self.current_target_id)
@@ -163,8 +175,15 @@ def update_state(
     current_time: float,
     visible_victims: list[dict[str, Any]] | None = None,
     rescue_confirmed_id: str | None = None,
+    rescue_interaction_state: str | None = None,
 ) -> MissionState:
-    return planner.update_state(rover_position, current_time, visible_victims, rescue_confirmed_id)
+    return planner.update_state(
+        rover_position,
+        current_time,
+        visible_victims,
+        rescue_confirmed_id,
+        rescue_interaction_state,
+    )
 
 
 def get_current_target(

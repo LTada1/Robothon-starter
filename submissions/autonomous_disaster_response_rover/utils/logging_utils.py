@@ -37,6 +37,9 @@ class MissionLogger:
         detected_victims: list[str] | None = None,
         obstacle_distances: dict[str, float] | None = None,
         controller_decision: dict[str, Any] | None = None,
+        rescue_interaction: dict[str, Any] | None = None,
+        rescue_actuator_command: float = 0.0,
+        victim_confirmation_status: str = "",
         hazard_status: bool = False,
         collisions: int = 0,
         hazards: int = 0,
@@ -44,6 +47,7 @@ class MissionLogger:
         recovery_action: str | None = None,
     ) -> None:
         controller_decision = controller_decision or {}
+        rescue_interaction = rescue_interaction or {}
         self.trajectory.append(
             {
                 "timestamp": round(float(timestamp), 3),
@@ -64,6 +68,11 @@ class MissionLogger:
                 "avoidance_decision": controller_decision.get("avoidance_decision", ""),
                 "heading_error": round(float(controller_decision.get("heading_error", 0.0)), 5) if controller_decision else "",
                 "speed_scale": round(float(controller_decision.get("speed_scale", 0.0)), 5) if controller_decision else "",
+                "rescue_interaction_state": rescue_interaction.get("rescue_interaction_state", "inactive"),
+                "rescue_actuator_command": round(float(rescue_actuator_command), 5),
+                "rescue_tool_deployed": bool(rescue_interaction.get("rescue_tool_deployed", False)),
+                "aligned_to_victim": bool(rescue_interaction.get("aligned_to_victim", False)),
+                "victim_confirmation_status": victim_confirmation_status,
                 "hazard_status": bool(hazard_status),
                 "collisions": int(collisions),
                 "hazards": int(hazards),
@@ -106,6 +115,11 @@ class MissionLogger:
             "avoidance_decision",
             "heading_error",
             "speed_scale",
+            "rescue_interaction_state",
+            "rescue_actuator_command",
+            "rescue_tool_deployed",
+            "aligned_to_victim",
+            "victim_confirmation_status",
             "hazard_status",
             "collisions",
             "hazards",
@@ -147,6 +161,11 @@ class MissionLogger:
             "distance_to_target",
             "speed_scale",
             "steering_bias",
+            "rescue_interaction_state",
+            "rescue_actuator_command",
+            "rescue_tool_deployed",
+            "aligned_to_victim",
+            "victim_confirmation_status",
             "recovery_action",
         ]
         with path.open("w", newline="", encoding="utf-8") as handle:

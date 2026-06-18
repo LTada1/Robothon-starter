@@ -9,7 +9,7 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from controllers.mission_planner import MissionState, initialize_mission
 from controllers.rover_controller import apply_control, compute_control_decision
-from controllers.victim_detector import confirm_rescue, detect_visible_victims
+from controllers.victim_detector import confirm_rescue, detect_visible_victims, evaluate_rescue_interaction
 from evaluate import (
     CONTROL_DT,
     EXTRACTION_ZONE,
@@ -27,11 +27,17 @@ from evaluate import (
     _set_rover_pose,
     _set_rover_start_pose,
 )
-from utils.config import SAFE_DISTANCE, SIM_TIMESTEP
+from utils.config import RESCUE_DEPLOY_COMMAND, RESCUE_RETRACT_COMMAND, SAFE_DISTANCE, SIM_TIMESTEP
 from utils.data_collection import collect_step_record
 from utils.geometry import distance_between_points, point_in_radius
 from utils.logging_utils import MissionLogger
-from utils.mujoco_helpers import get_body_orientation, get_body_position, load_model
+from utils.mujoco_helpers import (
+    get_body_orientation,
+    get_body_position,
+    get_rescue_deployer_state,
+    load_model,
+    set_rescue_deployer,
+)
 from utils.render_utils import initialize_viewer
 from utils.scoring import calculate_final_score
 
@@ -44,6 +50,10 @@ def _status_banner(new_events: list[dict], state: MissionState, mission_complete
     for event in reversed(new_events):
         if event.get("event") == "victim_rescued":
             return f"[RESCUED] {event['victim_id']} confirmed"
+        if event.get("event") == "rescue_deployment_started":
+            return f"[RESCUE] Deploying tool for {event['victim_id']}"
+        if event.get("event") == "rescue_interaction_state_changed":
+            return f"[{event['to'].upper()}] {event['victim_id']}"
         if event.get("event") == "victim_detected":
             return f"[DETECTED] {event['victim_id']} detected"
     if mission_complete:
@@ -67,6 +77,8 @@ def _overlay_lines(
     current_score: float,
     controller_state: str = "",
     avoidance_decision: str = "",
+    rescue_interaction_state: str = "inactive",
+    rescue_tool_deployed: bool = False,
 ) -> list[str]:
     target_name = target["id"] if target else "none"
     return [
@@ -79,6 +91,8 @@ def _overlay_lines(
         f"Collisions: {collisions}",
         f"Controller: {controller_state or 'TRACKING_TARGET'}",
         f"Decision: {avoidance_decision or 'follow_target_heading'}",
+        f"Rescue: {rescue_interaction_state}",
+        f"Tool: {'deployed' if rescue_tool_deployed else 'retracted'}",
     ]
 
 
@@ -89,6 +103,9 @@ def _print_event(event: dict) -> None:
     elif event.get("event") == "victim_rescued":
         print("[RESCUED]")
         print(f"{event['victim_id']} rescued")
+    elif event.get("event") == "rescue_deployment_started":
+        print("[RESCUE]")
+        print(f"Deploying rescue tool for {event['victim_id']}")
 
 
 def run_demo() -> dict:
@@ -129,6 +146,7 @@ def run_demo() -> dict:
     previous_distance_to_target = None
     previous_recovery_reason = None
     previous_controller_state = None
+    previous_rescue_interaction_state = None
     sim_time = 0.0
     control_steps = max(1, int(CONTROL_DT / SIM_TIMESTEP))
     active_banner = "[START] Mission initialized"
@@ -169,12 +187,76 @@ def run_demo() -> dict:
             if current_target is None:
                 break
 
-            if planner.state == MissionState.CONFIRM_RESCUE and current_target.get("id") != "extraction_zone":
-                rescued, rescue_event = confirm_rescue(rover_position, current_target, sim_time, rescue_timers)
+            rescue_interaction = {"rescue_interaction_state": "inactive"}
+            rescue_actuator_command = RESCUE_RETRACT_COMMAND
+            victim_confirmation_status = ""
+            if current_target.get("id") != "extraction_zone":
+                rescue_deployer_state = get_rescue_deployer_state(model, data)
+                rescue_interaction = evaluate_rescue_interaction(
+                    rover_position,
+                    rover_heading,
+                    current_target,
+                    rescue_deployer_state,
+                )
+                planner.update_state(
+                    rover_position,
+                    sim_time,
+                    rescue_interaction_state=rescue_interaction["rescue_interaction_state"],
+                )
+                if rescue_interaction["rescue_interaction_state"] in {"deploying", "confirming"}:
+                    rescue_actuator_command = RESCUE_DEPLOY_COMMAND
+                if rescue_interaction["rescue_interaction_state"] != previous_rescue_interaction_state:
+                    state_event = {
+                        "event": "rescue_interaction_state_changed",
+                        "time": round(sim_time, 3),
+                        "from": previous_rescue_interaction_state or "inactive",
+                        "to": rescue_interaction["rescue_interaction_state"],
+                        "victim_id": current_target["id"],
+                        "aligned_to_victim": rescue_interaction.get("aligned_to_victim", False),
+                        "rescue_tool_deployed": rescue_interaction.get("rescue_tool_deployed", False),
+                        "rescue_actuator_command": round(float(rescue_actuator_command), 5),
+                    }
+                    logger.log_event(state_event)
+                    loop_events.append(state_event)
+                    if rescue_interaction["rescue_interaction_state"] == "deploying":
+                        deployment_event = {
+                            "event": "rescue_deployment_started",
+                            "time": round(sim_time, 3),
+                            "victim_id": current_target["id"],
+                            "actuator": "rescue_deployer_actuator",
+                            "command": round(float(rescue_actuator_command), 5),
+                        }
+                        logger.log_event(deployment_event)
+                        loop_events.append(deployment_event)
+                    previous_rescue_interaction_state = rescue_interaction["rescue_interaction_state"]
+
+            set_rescue_deployer(model, data, rescue_actuator_command)
+
+            if planner.state == MissionState.CONFIRMING and current_target.get("id") != "extraction_zone":
+                rescued, rescue_event = confirm_rescue(
+                    rover_position,
+                    current_target,
+                    sim_time,
+                    rescue_timers,
+                    rover_heading=rover_heading,
+                    rescue_deployer_state=get_rescue_deployer_state(model, data),
+                )
                 if rescued and rescue_event:
                     planner.update_state(rover_position, sim_time, rescue_confirmed_id=rescue_event["victim_id"])
+                    victim_confirmation_status = "confirmed"
+                    deployment_complete_event = {
+                        "event": "rescue_deployment_complete",
+                        "time": round(sim_time, 3),
+                        "victim_id": rescue_event["victim_id"],
+                        "actuator": "rescue_deployer_actuator",
+                    }
+                    logger.log_event(deployment_complete_event)
+                    loop_events.append(deployment_complete_event)
+                    rescue_event["confirmation_method"] = "aligned_deployed_rescue_tool"
                     logger.log_event(rescue_event)
                     loop_events.append(rescue_event)
+                else:
+                    victim_confirmation_status = "confirming"
             else:
                 rescue_timers.clear()
 
@@ -297,6 +379,9 @@ def run_demo() -> dict:
                 detected_victims=detected_victim_ids,
                 obstacle_distances=obstacle_distances,
                 controller_decision=controller_decision,
+                rescue_interaction=rescue_interaction,
+                rescue_actuator_command=rescue_actuator_command,
+                victim_confirmation_status=victim_confirmation_status,
                 hazard_status=in_hazard,
                 collisions=collision_total,
                 hazards=hazard_entries,
@@ -318,6 +403,9 @@ def run_demo() -> dict:
                     collision_count=collision_total,
                     recovery_action=recovery_action,
                     controller_decision=controller_decision,
+                    rescue_interaction=rescue_interaction,
+                    rescue_actuator_command=rescue_actuator_command,
+                    victim_confirmation_status=victim_confirmation_status,
                 )
             )
 
@@ -348,6 +436,8 @@ def run_demo() -> dict:
                 current_score=live_score,
                 controller_state=controller_decision.get("controller_state", ""),
                 avoidance_decision=controller_decision.get("avoidance_decision", ""),
+                rescue_interaction_state=rescue_interaction.get("rescue_interaction_state", "inactive"),
+                rescue_tool_deployed=bool(rescue_interaction.get("rescue_tool_deployed", False)),
             )
             renderer.capture_split_frame(
                 data,
@@ -383,6 +473,8 @@ def run_demo() -> dict:
                     current_score=final_score,
                     controller_state="COMPLETE",
                     avoidance_decision="mission_finished",
+                    rescue_interaction_state="complete",
+                    rescue_tool_deployed=False,
                 ),
                 banner="[COMPLETE] Mission finished",
             )

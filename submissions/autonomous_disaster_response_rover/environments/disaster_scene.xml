@@ -117,6 +117,6 @@
   <include file="../models/rover_scene_include.xml"/>
 
   <keyframe>
-    <key name="rover_start" qpos="-5.25 -3.75 0.24 0.9664 0 0 0.2571 0 0 0 0"/>
+    <key name="rover_start" qpos="-5.25 -3.75 0.24 0.9664 0 0 0.2571 0 0 0 0 0"/>
   </keyframe>
 </mujoco>
