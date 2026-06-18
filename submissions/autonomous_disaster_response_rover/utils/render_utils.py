@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Any
 
 import numpy as np
+from PIL import Image, ImageDraw, ImageFont
 
 
 def _require_mujoco() -> Any:
@@ -46,6 +47,7 @@ class DemoRenderer:
         self.follow_camera = self.mujoco.MjvCamera()
         self.overview_camera_name = overview_camera_name
         self.frames: list[np.ndarray] = []
+        self.font = ImageFont.load_default()
 
     def setup_camera(self) -> None:
         self.follow_camera.type = self.mujoco.mjtCamera.mjCAMERA_FREE
@@ -70,7 +72,47 @@ class DemoRenderer:
         self.frames.append(frame)
         return frame
 
-    def capture_split_frame(self, data: Any) -> np.ndarray:
+    def _overlay_text(
+        self,
+        frame: np.ndarray,
+        overlay_lines: list[str] | None = None,
+        banner: str | None = None,
+    ) -> np.ndarray:
+        if not overlay_lines and not banner:
+            return frame
+
+        image = Image.fromarray(frame)
+        draw = ImageDraw.Draw(image, "RGBA")
+
+        if overlay_lines:
+            line_height = 24
+            panel_width = 360
+            panel_height = 26 + line_height * len(overlay_lines)
+            draw.rounded_rectangle((18, 18, 18 + panel_width, 18 + panel_height), radius=8, fill=(8, 12, 16, 190))
+            draw.text((34, 30), "Autonomous Disaster Response Rover", fill=(255, 214, 128, 255), font=self.font)
+            y = 56
+            for line in overlay_lines:
+                draw.text((34, y), line, fill=(238, 244, 248, 255), font=self.font)
+                y += line_height
+
+        if banner:
+            text_box = draw.textbbox((0, 0), banner, font=self.font)
+            text_width = text_box[2] - text_box[0]
+            x0 = max(18, (self.width - text_width) // 2 - 32)
+            x1 = min(self.width - 18, (self.width + text_width) // 2 + 32)
+            y0 = self.height - 82
+            y1 = self.height - 30
+            draw.rounded_rectangle((x0, y0, x1, y1), radius=8, fill=(5, 28, 20, 210))
+            draw.text(((self.width - text_width) // 2, y0 + 18), banner, fill=(150, 255, 190, 255), font=self.font)
+
+        return np.asarray(image)
+
+    def capture_split_frame(
+        self,
+        data: Any,
+        overlay_lines: list[str] | None = None,
+        banner: str | None = None,
+    ) -> np.ndarray:
         self._update_follow_camera(data)
         self.renderer.update_scene(data, camera=self.follow_camera)
         follow = self.renderer.render().copy()
@@ -79,6 +121,7 @@ class DemoRenderer:
         overview = self.renderer.render().copy()
 
         split = np.concatenate([follow[:, : self.width // 2], overview[:, self.width // 2 :]], axis=1)
+        split = self._overlay_text(split, overlay_lines=overlay_lines, banner=banner)
         self.frames.append(split)
         return split
 

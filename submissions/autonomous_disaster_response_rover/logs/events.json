@@ -1,0 +1,1309 @@
+[
+  {
+    "event": "mission_started",
+    "time": 0.0
+  },
+  {
+    "event": "victim_detected",
+    "victim_id": "victim_1",
+    "time": 0.0
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 0.32
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 0.36
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 0.4
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 0.44
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 0.48
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 0.52
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 0.56
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 0.6
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 0.64
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 0.68
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 0.72
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 0.76
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 0.8
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 0.84
+  },
+  {
+    "event": "recovery_action",
+    "reason": "blocked_path",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 0.88
+  },
+  {
+    "event": "recovery_action",
+    "reason": "blocked_path",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 0.92
+  },
+  {
+    "event": "recovery_action",
+    "reason": "blocked_path",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 0.96
+  },
+  {
+    "event": "recovery_action",
+    "reason": "blocked_path",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 1.0
+  },
+  {
+    "event": "recovery_action",
+    "reason": "blocked_path",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 1.04
+  },
+  {
+    "event": "recovery_action",
+    "reason": "blocked_path",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 1.08
+  },
+  {
+    "event": "recovery_action",
+    "reason": "blocked_path",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 1.12
+  },
+  {
+    "event": "recovery_action",
+    "reason": "blocked_path",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 1.16
+  },
+  {
+    "event": "recovery_action",
+    "reason": "blocked_path",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 1.2
+  },
+  {
+    "event": "recovery_action",
+    "reason": "blocked_path",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 1.24
+  },
+  {
+    "event": "recovery_action",
+    "reason": "blocked_path",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 1.28
+  },
+  {
+    "event": "recovery_action",
+    "reason": "blocked_path",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 1.32
+  },
+  {
+    "event": "recovery_action",
+    "reason": "blocked_path",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 1.36
+  },
+  {
+    "event": "recovery_action",
+    "reason": "blocked_path",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 1.4
+  },
+  {
+    "event": "recovery_action",
+    "reason": "blocked_path",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 1.44
+  },
+  {
+    "event": "victim_rescued",
+    "victim_id": "victim_1",
+    "time": 1.44
+  },
+  {
+    "event": "recovery_action",
+    "reason": "blocked_path",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 1.48
+  },
+  {
+    "event": "recovery_action",
+    "reason": "blocked_path",
+    "action": "reverse_turn",
+    "success": false,
+    "time": 1.52
+  },
+  {
+    "event": "recovery_action",
+    "reason": "blocked_path",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 1.56
+  },
+  {
+    "event": "recovery_action",
+    "reason": "blocked_path",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 1.6
+  },
+  {
+    "event": "recovery_action",
+    "reason": "collision",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 1.64
+  },
+  {
+    "event": "recovery_action",
+    "reason": "blocked_path",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 1.68
+  },
+  {
+    "event": "recovery_action",
+    "reason": "blocked_path",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 1.72
+  },
+  {
+    "event": "recovery_action",
+    "reason": "blocked_path",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 1.76
+  },
+  {
+    "event": "recovery_action",
+    "reason": "collision",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 1.8
+  },
+  {
+    "event": "recovery_action",
+    "reason": "blocked_path",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 1.84
+  },
+  {
+    "event": "recovery_action",
+    "reason": "blocked_path",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 1.88
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 1.92
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 1.96
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 2.0
+  },
+  {
+    "event": "recovery_action",
+    "reason": "collision",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 2.16
+  },
+  {
+    "event": "recovery_action",
+    "reason": "collision",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 2.28
+  },
+  {
+    "event": "recovery_action",
+    "reason": "collision",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 2.32
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 2.4
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 2.44
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 2.48
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 2.52
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 2.56
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 2.6
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 2.64
+  },
+  {
+    "event": "victim_detected",
+    "victim_id": "victim_2",
+    "time": 2.64
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 2.68
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 2.72
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 2.76
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 2.8
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 2.84
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 2.88
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 2.92
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 2.96
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 3.0
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 3.04
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 3.08
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 3.12
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 3.16
+  },
+  {
+    "event": "recovery_action",
+    "reason": "collision",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 3.4
+  },
+  {
+    "event": "recovery_action",
+    "reason": "collision",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 3.56
+  },
+  {
+    "event": "recovery_action",
+    "reason": "collision",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 3.92
+  },
+  {
+    "event": "recovery_action",
+    "reason": "stuck",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 4.28
+  },
+  {
+    "event": "recovery_action",
+    "reason": "stuck",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 4.36
+  },
+  {
+    "event": "recovery_action",
+    "reason": "stuck",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 4.44
+  },
+  {
+    "event": "recovery_action",
+    "reason": "stuck",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 4.52
+  },
+  {
+    "event": "recovery_action",
+    "reason": "stuck",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 4.6
+  },
+  {
+    "event": "recovery_action",
+    "reason": "stuck",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 4.68
+  },
+  {
+    "event": "recovery_action",
+    "reason": "stuck",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 4.76
+  },
+  {
+    "event": "recovery_action",
+    "reason": "stuck",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 4.84
+  },
+  {
+    "event": "victim_rescued",
+    "victim_id": "victim_2",
+    "time": 4.84
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 5.0
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 5.04
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 5.08
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 5.12
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 5.16
+  },
+  {
+    "event": "recovery_action",
+    "reason": "blocked_path",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 5.2
+  },
+  {
+    "event": "recovery_action",
+    "reason": "collision",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 5.24
+  },
+  {
+    "event": "recovery_action",
+    "reason": "blocked_path",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 5.28
+  },
+  {
+    "event": "recovery_action",
+    "reason": "blocked_path",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 5.32
+  },
+  {
+    "event": "recovery_action",
+    "reason": "collision",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 5.36
+  },
+  {
+    "event": "recovery_action",
+    "reason": "collision",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 5.4
+  },
+  {
+    "event": "recovery_action",
+    "reason": "blocked_path",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 5.44
+  },
+  {
+    "event": "recovery_action",
+    "reason": "blocked_path",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 5.48
+  },
+  {
+    "event": "recovery_action",
+    "reason": "blocked_path",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 5.52
+  },
+  {
+    "event": "recovery_action",
+    "reason": "blocked_path",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 5.56
+  },
+  {
+    "event": "recovery_action",
+    "reason": "blocked_path",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 5.6
+  },
+  {
+    "event": "recovery_action",
+    "reason": "blocked_path",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 5.64
+  },
+  {
+    "event": "recovery_action",
+    "reason": "blocked_path",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 5.68
+  },
+  {
+    "event": "recovery_action",
+    "reason": "collision",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 5.72
+  },
+  {
+    "event": "recovery_action",
+    "reason": "blocked_path",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 5.76
+  },
+  {
+    "event": "recovery_action",
+    "reason": "blocked_path",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 5.8
+  },
+  {
+    "event": "recovery_action",
+    "reason": "collision",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 5.84
+  },
+  {
+    "event": "recovery_action",
+    "reason": "blocked_path",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 5.88
+  },
+  {
+    "event": "recovery_action",
+    "reason": "blocked_path",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 5.92
+  },
+  {
+    "event": "victim_detected",
+    "victim_id": "victim_3",
+    "time": 5.92
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 5.96
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 6.0
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 6.04
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 6.08
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 6.12
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 6.16
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 6.2
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 6.24
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 6.28
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 6.32
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 6.36
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 6.4
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 6.44
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 6.48
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 6.52
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 6.56
+  },
+  {
+    "event": "recovery_action",
+    "reason": "blocked_path",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 6.6
+  },
+  {
+    "event": "recovery_action",
+    "reason": "blocked_path",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 6.64
+  },
+  {
+    "event": "recovery_action",
+    "reason": "blocked_path",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 6.68
+  },
+  {
+    "event": "recovery_action",
+    "reason": "blocked_path",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 6.72
+  },
+  {
+    "event": "recovery_action",
+    "reason": "collision",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 6.8
+  },
+  {
+    "event": "recovery_action",
+    "reason": "collision",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 6.92
+  },
+  {
+    "event": "hazard_entered",
+    "time": 7.0,
+    "hazard_entries": 1
+  },
+  {
+    "event": "recovery_action",
+    "reason": "collision",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 7.36
+  },
+  {
+    "event": "recovery_action",
+    "reason": "stuck",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 7.56
+  },
+  {
+    "event": "recovery_action",
+    "reason": "stuck",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 7.64
+  },
+  {
+    "event": "recovery_action",
+    "reason": "stuck",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 7.72
+  },
+  {
+    "event": "recovery_action",
+    "reason": "stuck",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 7.8
+  },
+  {
+    "event": "recovery_action",
+    "reason": "stuck",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 7.88
+  },
+  {
+    "event": "recovery_action",
+    "reason": "stuck",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 7.96
+  },
+  {
+    "event": "recovery_action",
+    "reason": "stuck",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 8.04
+  },
+  {
+    "event": "recovery_action",
+    "reason": "stuck",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 8.12
+  },
+  {
+    "event": "victim_rescued",
+    "victim_id": "victim_3",
+    "time": 8.16
+  },
+  {
+    "event": "recovery_action",
+    "reason": "stuck",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 8.2
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 8.8
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 8.84
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 8.88
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 8.92
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 8.96
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 9.0
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 9.64
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 9.68
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 9.72
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 9.76
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 9.8
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 9.84
+  },
+  {
+    "event": "hazard_entered",
+    "time": 9.88,
+    "hazard_entries": 2
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 9.88
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 9.92
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 9.96
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 10.0
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 10.04
+  },
+  {
+    "event": "victim_detected",
+    "victim_id": "victim_4",
+    "time": 10.04
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 10.08
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 10.12
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 10.16
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 10.2
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 10.24
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 10.28
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 10.32
+  },
+  {
+    "event": "recovery_action",
+    "reason": "collision",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 10.36
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 10.4
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 10.44
+  },
+  {
+    "event": "recovery_action",
+    "reason": "collision",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 10.48
+  },
+  {
+    "event": "recovery_action",
+    "reason": "blocked_path",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 10.52
+  },
+  {
+    "event": "recovery_action",
+    "reason": "blocked_path",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 10.56
+  },
+  {
+    "event": "recovery_action",
+    "reason": "blocked_path",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 10.6
+  },
+  {
+    "event": "recovery_action",
+    "reason": "blocked_path",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 10.64
+  },
+  {
+    "event": "recovery_action",
+    "reason": "collision",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 10.68
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 10.88
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 10.92
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 10.96
+  },
+  {
+    "event": "recovery_action",
+    "reason": "obstacle_avoidance",
+    "action": "avoid_obstacle",
+    "success": true,
+    "time": 11.0
+  },
+  {
+    "event": "recovery_action",
+    "reason": "collision",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 11.28
+  },
+  {
+    "event": "recovery_action",
+    "reason": "stuck",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 11.68
+  },
+  {
+    "event": "recovery_action",
+    "reason": "stuck",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 11.76
+  },
+  {
+    "event": "recovery_action",
+    "reason": "stuck",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 11.84
+  },
+  {
+    "event": "recovery_action",
+    "reason": "stuck",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 11.92
+  },
+  {
+    "event": "recovery_action",
+    "reason": "stuck",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 12.0
+  },
+  {
+    "event": "recovery_action",
+    "reason": "stuck",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 12.08
+  },
+  {
+    "event": "recovery_action",
+    "reason": "stuck",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 12.16
+  },
+  {
+    "event": "victim_rescued",
+    "victim_id": "victim_4",
+    "time": 12.2
+  },
+  {
+    "event": "recovery_action",
+    "reason": "stuck",
+    "action": "reverse_turn",
+    "success": true,
+    "time": 12.24
+  }
+]

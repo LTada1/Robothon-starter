@@ -1,0 +1,27 @@
+{
+  "project": "Autonomous Disaster Response Rover",
+  "mission_success": true,
+  "mission_complete": true,
+  "victims_rescued": 4,
+  "total_victims": 4,
+  "collision_count": 21,
+  "hazard_entries": 2,
+  "obstacle_events": 143,
+  "recovery_attempts": 179,
+  "successful_recoveries": 178,
+  "mission_time_s": 12.24,
+  "time_limit_s": 120.0,
+  "distance_traveled_m": 18.06,
+  "reference_distance_m": 22.0,
+  "extraction_reached": true,
+  "final_state": "COMPLETE",
+  "final_score": 86.47,
+  "breakdown": {
+    "victims": 40.0,
+    "completion": 20.0,
+    "time": 13.47,
+    "collision": 0.0,
+    "distance": 10.0,
+    "hazard": 3.0
+  }
+}

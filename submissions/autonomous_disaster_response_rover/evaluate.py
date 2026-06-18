@@ -370,6 +370,12 @@ def run_evaluation() -> dict:
     logger.save_events()
     logger.save_dataset_summary(dataset_summary)
     logger.save_score_report(score_report)
+    logger.save_post_run_artifacts(
+        score_report=score_report,
+        dataset_summary=dataset_summary,
+        victims=planner.victims,
+        extraction_zone=planner.extraction_zone,
+    )
 
     return {**score_report, "dataset_summary": dataset_summary}
 
