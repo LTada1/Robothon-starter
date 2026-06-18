@@ -8,7 +8,7 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from controllers.mission_planner import MissionState, initialize_mission
-from controllers.rover_controller import apply_control, compute_wheel_commands
+from controllers.rover_controller import apply_control, compute_control_decision
 from controllers.victim_detector import confirm_rescue, detect_visible_victims
 from evaluate import (
     CONTROL_DT,
@@ -46,8 +46,6 @@ def _status_banner(new_events: list[dict], state: MissionState, mission_complete
             return f"[RESCUED] {event['victim_id']} confirmed"
         if event.get("event") == "victim_detected":
             return f"[DETECTED] {event['victim_id']} detected"
-        if event.get("event") == "recovery_action":
-            return f"[RECOVERY] {event['action']} ({event['reason']})"
     if mission_complete:
         return "[COMPLETE] Mission finished at extraction zone"
     if state == MissionState.RETURN_TO_BASE:
@@ -65,16 +63,22 @@ def _overlay_lines(
     total_victims: int,
     collisions: int,
     mission_time: float,
+    distance: float,
     current_score: float,
+    controller_state: str = "",
+    avoidance_decision: str = "",
 ) -> list[str]:
     target_name = target["id"] if target else "none"
     return [
         f"State: {state.value}",
         f"Target: {target_name}",
         f"Rescued: {rescued}/{total_victims}",
+        f"Time: {mission_time:05.2f}s",
+        f"Distance: {distance:05.2f} m",
+        f"Score: {current_score:05.2f}/100",
         f"Collisions: {collisions}",
-        f"Mission time: {mission_time:05.2f}s",
-        f"Live score: {current_score:05.2f}/100",
+        f"Controller: {controller_state or 'TRACKING_TARGET'}",
+        f"Decision: {avoidance_decision or 'follow_target_heading'}",
     ]
 
 
@@ -85,9 +89,6 @@ def _print_event(event: dict) -> None:
     elif event.get("event") == "victim_rescued":
         print("[RESCUED]")
         print(f"{event['victim_id']} rescued")
-    elif event.get("event") == "recovery_action":
-        print("[RECOVERY]")
-        print(f"{event['action']} because {event['reason']}")
 
 
 def run_demo() -> dict:
@@ -127,8 +128,13 @@ def run_demo() -> dict:
     previous_position = get_body_position(model, data, "rover")
     previous_distance_to_target = None
     previous_recovery_reason = None
+    previous_controller_state = None
     sim_time = 0.0
     control_steps = max(1, int(CONTROL_DT / SIM_TIMESTEP))
+    active_banner = "[START] Mission initialized"
+    banner_frames_remaining = DEMO_FPS * 3
+    return_announced = False
+    demo_extraction_radius = 0.35
 
     try:
         while sim_time < MISSION_TIMEOUT_S and planner.state not in {MissionState.COMPLETE, MissionState.TIMEOUT}:
@@ -157,6 +163,9 @@ def run_demo() -> dict:
                     loop_events.append(event)
 
             current_target = planner.get_current_target(rover_position)
+            if len(planner.rescued_victim_ids) == len(planner.victims):
+                planner.state = MissionState.RETURN_TO_BASE
+                current_target = {"id": "extraction_zone", **planner.extraction_zone}
             if current_target is None:
                 break
 
@@ -170,12 +179,31 @@ def run_demo() -> dict:
                 rescue_timers.clear()
 
             obstacle_distances = _obstacle_sensor_distances(rover_position, rover_heading)
-            left_velocity, right_velocity = compute_wheel_commands(
+            controller_decision = compute_control_decision(
                 rover_position,
                 rover_heading,
                 current_target["position"],
                 obstacle_distances,
             )
+            if controller_decision["controller_state"] != previous_controller_state:
+                state_event = {
+                    "event": "controller_state_changed",
+                    "time": round(sim_time, 3),
+                    "from": previous_controller_state or "NONE",
+                    "to": controller_decision["controller_state"],
+                    "avoidance_decision": controller_decision["avoidance_decision"],
+                    "active_target": current_target["id"],
+                    "front_distance": round(float(obstacle_distances.get("front", 0.0)), 5),
+                    "left_distance": round(float(obstacle_distances.get("left", 0.0)), 5),
+                    "right_distance": round(float(obstacle_distances.get("right", 0.0)), 5),
+                    "left_wheel_velocity": round(float(controller_decision["left_wheel_velocity"]), 5),
+                    "right_wheel_velocity": round(float(controller_decision["right_wheel_velocity"]), 5),
+                }
+                logger.log_event(state_event)
+                loop_events.append(state_event)
+                previous_controller_state = controller_decision["controller_state"]
+            left_velocity = controller_decision["left_wheel_velocity"]
+            right_velocity = controller_decision["right_wheel_velocity"]
             apply_control(model, data, left_velocity, right_velocity)
 
             for _ in range(control_steps):
@@ -233,10 +261,15 @@ def run_demo() -> dict:
             previous_distance_to_target = distance_between_points(new_position, current_target["position"])
 
             planner.update_state(new_position, sim_time)
-            if planner.state == MissionState.RETURN_TO_BASE and point_in_radius(
-                new_position, EXTRACTION_ZONE["position"], EXTRACTION_ZONE["radius"]
-            ):
-                planner.update_state(new_position, sim_time)
+            if len(planner.rescued_victim_ids) == len(planner.victims):
+                if point_in_radius(new_position, EXTRACTION_ZONE["position"], demo_extraction_radius):
+                    planner.state = MissionState.COMPLETE
+                    completion_event = {"event": "mission_complete", "time": round(sim_time, 3)}
+                    if not any(event.get("event") == "mission_complete" for event in logger.events):
+                        logger.log_event(completion_event)
+                        loop_events.append(completion_event)
+                else:
+                    planner.state = MissionState.RETURN_TO_BASE
 
             detected_victim_ids = [victim["id"] for victim in visible_victims]
             wheel_commands = {"left": left_velocity, "right": right_velocity}
@@ -263,6 +296,7 @@ def run_demo() -> dict:
                 active_target=current_target["id"],
                 detected_victims=detected_victim_ids,
                 obstacle_distances=obstacle_distances,
+                controller_decision=controller_decision,
                 hazard_status=in_hazard,
                 collisions=collision_total,
                 hazards=hazard_entries,
@@ -283,6 +317,7 @@ def run_demo() -> dict:
                     hazard_status=in_hazard,
                     collision_count=collision_total,
                     recovery_action=recovery_action,
+                    controller_decision=controller_decision,
                 )
             )
 
@@ -290,10 +325,17 @@ def run_demo() -> dict:
                 _print_event(event)
             printed_events = len(logger.events)
 
-            if planner.state == MissionState.RETURN_TO_BASE and "return_printed" not in getattr(run_demo, "_flags", set()):
+            if planner.state == MissionState.RETURN_TO_BASE and not return_announced:
                 print("[RETURN]")
                 print("Heading to extraction zone")
-                run_demo._flags = {"return_printed"}
+                active_banner = "[RETURN] Heading to extraction zone"
+                banner_frames_remaining = DEMO_FPS * 3
+                return_announced = True
+
+            candidate_banner = _status_banner(loop_events, planner.state, mission_complete)
+            if candidate_banner:
+                active_banner = candidate_banner
+                banner_frames_remaining = DEMO_FPS * 3
 
             overlay = _overlay_lines(
                 state=planner.state,
@@ -302,13 +344,17 @@ def run_demo() -> dict:
                 total_victims=len(planner.victims),
                 collisions=collision_total,
                 mission_time=sim_time,
+                distance=distance_traveled,
                 current_score=live_score,
+                controller_state=controller_decision.get("controller_state", ""),
+                avoidance_decision=controller_decision.get("avoidance_decision", ""),
             )
             renderer.capture_split_frame(
                 data,
                 overlay_lines=overlay,
-                banner=_status_banner(loop_events, planner.state, mission_complete),
+                banner=active_banner if banner_frames_remaining > 0 else None,
             )
+            banner_frames_remaining = max(0, banner_frames_remaining - 1)
 
         # Hold the completed mission for a few seconds so the final score is readable.
         final_metrics = {
@@ -333,7 +379,10 @@ def run_demo() -> dict:
                     total_victims=len(planner.victims),
                     collisions=collision_total,
                     mission_time=sim_time,
+                    distance=distance_traveled,
                     current_score=final_score,
+                    controller_state="COMPLETE",
+                    avoidance_decision="mission_finished",
                 ),
                 banner="[COMPLETE] Mission finished",
             )

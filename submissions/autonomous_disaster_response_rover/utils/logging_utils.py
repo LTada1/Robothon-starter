@@ -36,12 +36,14 @@ class MissionLogger:
         active_target: str | None = None,
         detected_victims: list[str] | None = None,
         obstacle_distances: dict[str, float] | None = None,
+        controller_decision: dict[str, Any] | None = None,
         hazard_status: bool = False,
         collisions: int = 0,
         hazards: int = 0,
         completion_status: bool = False,
         recovery_action: str | None = None,
     ) -> None:
+        controller_decision = controller_decision or {}
         self.trajectory.append(
             {
                 "timestamp": round(float(timestamp), 3),
@@ -58,6 +60,10 @@ class MissionLogger:
                 "front_obstacle_distance": round(float(obstacle_distances.get("front", 0.0)), 5) if obstacle_distances else "",
                 "left_obstacle_distance": round(float(obstacle_distances.get("left", 0.0)), 5) if obstacle_distances else "",
                 "right_obstacle_distance": round(float(obstacle_distances.get("right", 0.0)), 5) if obstacle_distances else "",
+                "controller_state": controller_decision.get("controller_state", ""),
+                "avoidance_decision": controller_decision.get("avoidance_decision", ""),
+                "heading_error": round(float(controller_decision.get("heading_error", 0.0)), 5) if controller_decision else "",
+                "speed_scale": round(float(controller_decision.get("speed_scale", 0.0)), 5) if controller_decision else "",
                 "hazard_status": bool(hazard_status),
                 "collisions": int(collisions),
                 "hazards": int(hazards),
@@ -96,6 +102,10 @@ class MissionLogger:
             "front_obstacle_distance",
             "left_obstacle_distance",
             "right_obstacle_distance",
+            "controller_state",
+            "avoidance_decision",
+            "heading_error",
+            "speed_scale",
             "hazard_status",
             "collisions",
             "hazards",
@@ -131,6 +141,12 @@ class MissionLogger:
             "left_wheel_command",
             "right_wheel_command",
             "navigation_decision",
+            "controller_state",
+            "avoidance_decision",
+            "heading_error",
+            "distance_to_target",
+            "speed_scale",
+            "steering_bias",
             "recovery_action",
         ]
         with path.open("w", newline="", encoding="utf-8") as handle:

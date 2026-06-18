@@ -30,9 +30,15 @@ def collect_navigation_decision(
     active_target: dict[str, Any] | None,
     obstacle_distances: dict[str, float],
     recovery_action: str | None,
+    controller_state: str | None = None,
+    avoidance_decision: str | None = None,
 ) -> str:
+    if avoidance_decision:
+        return avoidance_decision
     if recovery_action:
         return recovery_action
+    if controller_state:
+        return controller_state.lower()
     if obstacle_distances.get("front", 5.0) < 1.2:
         return "avoid_obstacle"
     if active_target is None:
@@ -58,13 +64,17 @@ def collect_step_record(
     hazard_status: bool,
     collision_count: int,
     recovery_action: str | None,
+    controller_decision: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     detected_victims = collect_victim_detection_events(visible_victims)
+    controller_decision = controller_decision or {}
     navigation_decision = collect_navigation_decision(
         mission_state,
         active_target,
         obstacle_distances,
         recovery_action,
+        controller_state=controller_decision.get("controller_state"),
+        avoidance_decision=controller_decision.get("avoidance_decision"),
     )
     return {
         "timestamp": round(float(timestamp), 3),
@@ -83,5 +93,11 @@ def collect_step_record(
         "left_wheel_command": round(float(wheel_commands.get("left", 0.0)), 5),
         "right_wheel_command": round(float(wheel_commands.get("right", 0.0)), 5),
         "navigation_decision": navigation_decision,
+        "controller_state": controller_decision.get("controller_state", ""),
+        "avoidance_decision": controller_decision.get("avoidance_decision", ""),
+        "heading_error": round(float(controller_decision.get("heading_error", 0.0)), 5),
+        "distance_to_target": round(float(controller_decision.get("distance_to_target", 0.0)), 5),
+        "speed_scale": round(float(controller_decision.get("speed_scale", 0.0)), 5),
+        "steering_bias": round(float(controller_decision.get("steering_bias", 0.0)), 5),
         "recovery_action": recovery_action or "",
     }

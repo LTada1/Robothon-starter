@@ -70,38 +70,104 @@ def _avoidance_turn(obstacle_distances: Mapping[str, float] | None) -> float:
     return -clearance_bias
 
 
+def classify_controller_state(
+    rover_position: Point,
+    rover_heading: float,
+    target_position: Point,
+    obstacle_distances: Mapping[str, float] | None = None,
+) -> dict:
+    distance_to_target = distance_between_points(rover_position, target_position)
+    heading_error = compute_heading_error(rover_position, rover_heading, target_position)
+    obstacle_distances = obstacle_distances or {}
+    front = float(obstacle_distances.get("front", SAFE_DISTANCE * 2.0))
+    left = float(obstacle_distances.get("left", SAFE_DISTANCE * 2.0))
+    right = float(obstacle_distances.get("right", SAFE_DISTANCE * 2.0))
+
+    if distance_to_target <= TARGET_REACHED_RADIUS:
+        state = "TARGET_REACHED"
+        avoidance_decision = "stop_at_target"
+        speed_scale = 0.0
+        steering_bias = 0.0
+    elif front <= EMERGENCY_DISTANCE and left <= EMERGENCY_DISTANCE and right <= EMERGENCY_DISTANCE:
+        state = "TRAPPED_RECOVERY"
+        avoidance_decision = "reverse_turn"
+        speed_scale = -0.35
+        steering_bias = 1.0
+    elif front <= EMERGENCY_DISTANCE:
+        state = "BLOCKED"
+        turn_left = left >= right
+        avoidance_decision = "turn_left_from_block" if turn_left else "turn_right_from_block"
+        speed_scale = 0.0
+        steering_bias = 1.0 if turn_left else -1.0
+    elif front < SAFE_DISTANCE:
+        state = "AVOIDING"
+        turn_left = left >= right
+        avoidance_decision = "veer_left_more_clearance" if turn_left else "veer_right_more_clearance"
+        speed_scale = _obstacle_speed_scale(obstacle_distances)
+        steering_bias = 0.65 if turn_left else -0.65
+    elif min(left, right) < SAFE_DISTANCE * 0.6:
+        state = "SIDE_CLEARANCE"
+        avoidance_decision = "bias_away_from_left" if left < right else "bias_away_from_right"
+        speed_scale = 0.75
+        steering_bias = -0.35 if left < right else 0.35
+    else:
+        state = "TRACKING_TARGET"
+        avoidance_decision = "follow_target_heading"
+        speed_scale = 1.0
+        steering_bias = 0.0
+
+    return {
+        "controller_state": state,
+        "avoidance_decision": avoidance_decision,
+        "heading_error": heading_error,
+        "distance_to_target": distance_to_target,
+        "front_distance": front,
+        "left_distance": left,
+        "right_distance": right,
+        "speed_scale": speed_scale,
+        "steering_bias": steering_bias,
+    }
+
+
+def compute_control_decision(
+    rover_position: Point,
+    rover_heading: float,
+    target_position: Point,
+    obstacle_distances: Mapping[str, float] | None = None,
+) -> dict:
+    decision = classify_controller_state(rover_position, rover_heading, target_position, obstacle_distances)
+
+    if decision["controller_state"] == "TARGET_REACHED":
+        left_speed = right_speed = 0.0
+    elif decision["controller_state"] == "TRAPPED_RECOVERY":
+        left_speed = -MAX_WHEEL_SPEED * 0.45
+        right_speed = MAX_WHEEL_SPEED * 0.30
+    elif decision["controller_state"] == "BLOCKED":
+        turn = MAX_WHEEL_SPEED * 0.36 * (1.0 if decision["steering_bias"] >= 0.0 else -1.0)
+        left_speed = -turn
+        right_speed = turn
+    else:
+        heading_error = float(decision["heading_error"])
+        heading_scale = max(0.25, 1.0 - min(abs(heading_error), 1.5) / 1.5)
+        base_speed = ROVER_SPEED * float(decision["speed_scale"]) * heading_scale
+        steering = _clamp(TURN_GAIN * heading_error, -MAX_WHEEL_SPEED * 0.55, MAX_WHEEL_SPEED * 0.55)
+        steering += MAX_WHEEL_SPEED * 0.28 * float(decision["steering_bias"])
+        left_speed = base_speed - steering
+        right_speed = base_speed + steering
+
+    decision["left_wheel_velocity"] = _clamp(left_speed, -MAX_WHEEL_SPEED, MAX_WHEEL_SPEED)
+    decision["right_wheel_velocity"] = _clamp(right_speed, -MAX_WHEEL_SPEED, MAX_WHEEL_SPEED)
+    return decision
+
+
 def compute_wheel_commands(
     rover_position: Point,
     rover_heading: float,
     target_position: Point,
     obstacle_distances: Mapping[str, float] | None = None,
 ) -> tuple[float, float]:
-    distance_to_target = distance_between_points(rover_position, target_position)
-    if distance_to_target <= TARGET_REACHED_RADIUS:
-        return 0.0, 0.0
-
-    heading_error = compute_heading_error(rover_position, rover_heading, target_position)
-    speed_scale = _obstacle_speed_scale(obstacle_distances)
-    heading_scale = max(0.25, 1.0 - min(abs(heading_error), 1.5) / 1.5)
-    base_speed = ROVER_SPEED * speed_scale * heading_scale
-
-    if speed_scale == 0.0:
-        avoidance = _avoidance_turn(obstacle_distances)
-        turn_command = MAX_WHEEL_SPEED * 0.32 * (1.0 if avoidance >= 0.0 else -1.0)
-        return _clamp(turn_command, -MAX_WHEEL_SPEED, MAX_WHEEL_SPEED), _clamp(
-            -turn_command, -MAX_WHEEL_SPEED, MAX_WHEEL_SPEED
-        )
-
-    steering = _clamp(TURN_GAIN * heading_error, -MAX_WHEEL_SPEED * 0.65, MAX_WHEEL_SPEED * 0.65)
-    steering += MAX_WHEEL_SPEED * 0.20 * _avoidance_turn(obstacle_distances)
-
-    left_speed = base_speed - steering
-    right_speed = base_speed + steering
-
-    return (
-        _clamp(left_speed, -MAX_WHEEL_SPEED, MAX_WHEEL_SPEED),
-        _clamp(right_speed, -MAX_WHEEL_SPEED, MAX_WHEEL_SPEED),
-    )
+    decision = compute_control_decision(rover_position, rover_heading, target_position, obstacle_distances)
+    return decision["left_wheel_velocity"], decision["right_wheel_velocity"]
 
 
 def apply_control(model, data, left_wheel_velocity: float, right_wheel_velocity: float) -> None:

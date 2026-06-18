@@ -47,7 +47,18 @@ class DemoRenderer:
         self.follow_camera = self.mujoco.MjvCamera()
         self.overview_camera_name = overview_camera_name
         self.frames: list[np.ndarray] = []
-        self.font = ImageFont.load_default()
+        self.font = self._load_font(18)
+        self.title_font = self._load_font(22)
+        self.banner_font = self._load_font(24)
+
+    @staticmethod
+    def _load_font(size: int) -> ImageFont.ImageFont:
+        for font_name in ("arial.ttf", "DejaVuSans.ttf"):
+            try:
+                return ImageFont.truetype(font_name, size)
+            except OSError:
+                continue
+        return ImageFont.load_default()
 
     def setup_camera(self) -> None:
         self.follow_camera.type = self.mujoco.mjtCamera.mjCAMERA_FREE
@@ -85,25 +96,25 @@ class DemoRenderer:
         draw = ImageDraw.Draw(image, "RGBA")
 
         if overlay_lines:
-            line_height = 24
-            panel_width = 360
-            panel_height = 26 + line_height * len(overlay_lines)
+            line_height = 28
+            panel_width = 410
+            panel_height = 42 + line_height * len(overlay_lines)
             draw.rounded_rectangle((18, 18, 18 + panel_width, 18 + panel_height), radius=8, fill=(8, 12, 16, 190))
-            draw.text((34, 30), "Autonomous Disaster Response Rover", fill=(255, 214, 128, 255), font=self.font)
-            y = 56
+            draw.text((34, 30), "Autonomous Disaster Response Rover", fill=(255, 214, 128, 255), font=self.title_font)
+            y = 68
             for line in overlay_lines:
                 draw.text((34, y), line, fill=(238, 244, 248, 255), font=self.font)
                 y += line_height
 
         if banner:
-            text_box = draw.textbbox((0, 0), banner, font=self.font)
+            text_box = draw.textbbox((0, 0), banner, font=self.banner_font)
             text_width = text_box[2] - text_box[0]
             x0 = max(18, (self.width - text_width) // 2 - 32)
             x1 = min(self.width - 18, (self.width + text_width) // 2 + 32)
-            y0 = self.height - 82
-            y1 = self.height - 30
+            y0 = self.height - 94
+            y1 = self.height - 28
             draw.rounded_rectangle((x0, y0, x1, y1), radius=8, fill=(5, 28, 20, 210))
-            draw.text(((self.width - text_width) // 2, y0 + 18), banner, fill=(150, 255, 190, 255), font=self.font)
+            draw.text(((self.width - text_width) // 2, y0 + 20), banner, fill=(150, 255, 190, 255), font=self.banner_font)
 
         return np.asarray(image)
 

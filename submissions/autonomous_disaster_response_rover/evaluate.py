@@ -9,7 +9,7 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from controllers.mission_planner import MissionState, initialize_mission
-from controllers.rover_controller import apply_control, compute_wheel_commands
+from controllers.rover_controller import apply_control, compute_control_decision
 from controllers.victim_detector import confirm_rescue, detect_visible_victims
 from environments.disaster_layout import EXTRACTION_ZONE, HAZARD_ZONES, OBSTACLES, ROVER_START_POSITION, ROVER_START_YAW
 from utils.config import EMERGENCY_DISTANCE, SAFE_DISTANCE, SIM_TIMESTEP
@@ -193,6 +193,7 @@ def run_evaluation() -> dict:
     previous_position = get_body_position(model, data, "rover")
     previous_distance_to_target = None
     previous_recovery_reason = None
+    previous_controller_state = None
     sim_time = 0.0
     control_steps = max(1, int(CONTROL_DT / SIM_TIMESTEP))
 
@@ -232,12 +233,31 @@ def run_evaluation() -> dict:
             rescue_timers.clear()
 
         obstacle_distances = _obstacle_sensor_distances(rover_position, rover_heading)
-        left_velocity, right_velocity = compute_wheel_commands(
+        controller_decision = compute_control_decision(
             rover_position,
             rover_heading,
             current_target["position"],
             obstacle_distances,
         )
+        if controller_decision["controller_state"] != previous_controller_state:
+            logger.log_event(
+                {
+                    "event": "controller_state_changed",
+                    "time": round(float(sim_time), 3),
+                    "from": previous_controller_state or "NONE",
+                    "to": controller_decision["controller_state"],
+                    "avoidance_decision": controller_decision["avoidance_decision"],
+                    "active_target": current_target["id"],
+                    "front_distance": round(float(obstacle_distances.get("front", 0.0)), 5),
+                    "left_distance": round(float(obstacle_distances.get("left", 0.0)), 5),
+                    "right_distance": round(float(obstacle_distances.get("right", 0.0)), 5),
+                    "left_wheel_velocity": round(float(controller_decision["left_wheel_velocity"]), 5),
+                    "right_wheel_velocity": round(float(controller_decision["right_wheel_velocity"]), 5),
+                }
+            )
+            previous_controller_state = controller_decision["controller_state"]
+        left_velocity = controller_decision["left_wheel_velocity"]
+        right_velocity = controller_decision["right_wheel_velocity"]
         apply_control(model, data, left_velocity, right_velocity)
 
         for _ in range(control_steps):
@@ -305,6 +325,7 @@ def run_evaluation() -> dict:
             active_target=current_target["id"],
             detected_victims=detected_victim_ids,
             obstacle_distances=obstacle_distances,
+            controller_decision=controller_decision,
             hazard_status=in_hazard,
             collisions=collision_total,
             hazards=hazard_entries,
@@ -325,6 +346,7 @@ def run_evaluation() -> dict:
                 hazard_status=in_hazard,
                 collision_count=collision_total,
                 recovery_action=recovery_action,
+                controller_decision=controller_decision,
             )
         )
 
