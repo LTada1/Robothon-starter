@@ -1,5 +1,21 @@
 # Autonomous Disaster Response Rover and Robotics Dataset Generation Platform
 
+## Demo Video
+
+Watch the autonomous disaster response rover demonstration:
+
+[Open Demo Video](./logs/demo.mp4)
+
+The demo shows:
+- Autonomous victim search
+- Sensor-driven obstacle avoidance
+- Closed-loop navigation
+- Physical rescue interaction
+- Victim confirmation
+- Return to extraction
+
+---
+
 ## Project Overview
 
 Autonomous Disaster Response Rover is a MuJoCo-based rescue simulation and
