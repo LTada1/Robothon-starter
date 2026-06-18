@@ -3,3 +3,7 @@ __pycache__/
 *.pyc
 .DS_Store
 .env
+submissions/autonomous_disaster_response_rover/logs/events.json
+submissions/autonomous_disaster_response_rover/logs/mission_log.json
+submissions/autonomous_disaster_response_rover/logs/sensor_data.csv
+submissions/autonomous_disaster_response_rover/logs/trajectory.csv
